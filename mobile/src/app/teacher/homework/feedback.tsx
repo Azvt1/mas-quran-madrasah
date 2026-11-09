@@ -47,7 +47,8 @@ function FeedbackForm({ assignment: a, studentId, others }: { assignment: Assign
   const [behaviour, setBehaviour] = useState<'good' | 'poor' | null>(
     a.behaviorSatisfactory === null ? null : a.behaviorSatisfactory ? 'good' : 'poor',
   );
-  const [text, setText] = useState(a.feedback ?? '');
+  // An un-reviewed item starts with the note written when it was assigned
+  const [text, setText] = useState(reviewed ? (a.feedback ?? '') : (a.feedback ?? a.instructions ?? ''));
 
   async function onSave() {
     if (!done || !behaviour) return;
@@ -66,7 +67,7 @@ function FeedbackForm({ assignment: a, studentId, others }: { assignment: Assign
       router.back();
       return;
     }
-    const upcoming = upcomingHomework(others, a.id).map((o) => o.title);
+    const upcoming = upcomingHomework(others, a.id);
     Alert.alert('Feedback saved', `Send it to ${s.name.split(' ')[0]}'s parent on WhatsApp?`, [
       { text: 'Not now', style: 'cancel', onPress: () => router.back() },
       {
@@ -159,7 +160,7 @@ function FeedbackForm({ assignment: a, studentId, others }: { assignment: Assign
                 isCompleted: reviewed || a.isCompleted ? a.isCompleted : null,
                 behaviorSatisfactory: a.behaviorSatisfactory,
                 feedback: a.feedback,
-                upcoming: upcomingHomework(others, a.id).map((o) => o.title),
+                upcoming: upcomingHomework(others, a.id),
               }),
             )
           }

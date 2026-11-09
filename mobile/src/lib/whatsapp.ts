@@ -2,6 +2,22 @@ import { Alert, Linking } from 'react-native';
 
 import { formatSessionDate } from '@/lib/greeting';
 
+export interface UpcomingItem {
+  title: string;
+  dueDate: string | null;
+  instructions?: string | null;
+}
+
+function upcomingLines(items: UpcomingItem[]): string {
+  return items
+    .map((i) => {
+      const due = i.dueDate ? ` (due ${formatSessionDate(i.dueDate)})` : '';
+      const note = i.instructions?.trim() ? `   📝 ${i.instructions.trim()}\n` : '';
+      return `• ${i.title}${due}\n${note}`;
+    })
+    .join('');
+}
+
 // Same message format as the website's HomeworkWhatsAppButton.
 export function homeworkMessage(opts: {
   studentName: string;
@@ -9,7 +25,7 @@ export function homeworkMessage(opts: {
   isCompleted?: boolean | null;
   behaviorSatisfactory?: boolean | null;
   feedback?: string | null;
-  upcoming?: string[];
+  upcoming?: UpcomingItem[];
 }): string {
   const { studentName, homeworkTitle, isCompleted, behaviorSatisfactory, feedback, upcoming } = opts;
   const firstName = studentName.split(' ')[0];
@@ -26,19 +42,19 @@ export function homeworkMessage(opts: {
   }
   if (upcoming?.length) {
     msg += `\n━━━━━━━━━━━━━━━\n📚 *Upcoming homework for ${firstName}:*\n`;
-    upcoming.forEach((t) => (msg += `• ${t}\n`));
+    msg += upcomingLines(upcoming);
   }
   msg += `\nJazakAllahu Khayran.`;
   return msg;
 }
 
 /** General message to a parent listing the student's current homework. */
-export function homeworkListMessage(studentName: string, items: { title: string; dueDate: string | null }[]): string {
+export function homeworkListMessage(studentName: string, items: UpcomingItem[]): string {
   const firstName = studentName.split(' ')[0];
   let msg = `Assalamu Alaykum,\n\nThis is a message from the madrasa regarding ${studentName}.\n`;
   if (items.length) {
     msg += `\n📚 *Upcoming homework for ${firstName}:*\n`;
-    items.forEach((i) => (msg += `• ${i.title}${i.dueDate ? ` (due ${formatSessionDate(i.dueDate)})` : ''}\n`));
+    msg += upcomingLines(items);
   }
   msg += `\nJazakAllahu Khayran.`;
   return msg;

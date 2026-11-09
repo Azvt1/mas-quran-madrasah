@@ -34,7 +34,7 @@ export default function AssignHomework() {
         {
           text: 'Send',
           onPress: () => {
-            openWhatsApp(s.parentPhone!, homeworkListMessage(s.name, [{ title: v.title, dueDate: v.dueDate }]));
+            openWhatsApp(s.parentPhone!, homeworkListMessage(s.name, [{ title: v.title, dueDate: v.dueDate, instructions: v.instructions }]));
             router.back();
           },
         },

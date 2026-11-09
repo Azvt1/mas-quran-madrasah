@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Alert, TextInput, View } from 'react-native';
 
-import { AppText, Button, Card, Screen, useInputStyle } from '@/components/ui';
+import { AppText, Button, Card, Screen, Segmented, useInputStyle } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
+import { getThemePreference, setThemePreference, type ThemePreference } from '@/lib/theme-preference';
 
 export function ProfileScreen() {
   const { profile, session, signOut } = useAuth();
@@ -19,6 +20,7 @@ export function ProfileScreen() {
           {profile?.role}
         </AppText>
       </Card>
+      <Appearance />
       <ChangeEmail current={session?.user.email ?? ''} />
       <ChangePassword />
       <Button
@@ -32,6 +34,31 @@ export function ProfileScreen() {
         }
       />
     </Screen>
+  );
+}
+
+function Appearance() {
+  const [preference, setPreference] = useState<ThemePreference>(getThemePreference);
+
+  function change(next: ThemePreference) {
+    setPreference(next);
+    setThemePreference(next);
+  }
+
+  return (
+    <Card style={{ gap: Spacing.two }}>
+      <AppText variant="heading">Appearance</AppText>
+      <AppText variant="caption">Automatic follows your phone’s setting.</AppText>
+      <Segmented
+        value={preference}
+        onChange={change}
+        options={[
+          { value: 'system', label: 'Automatic' },
+          { value: 'light', label: 'Light' },
+          { value: 'dark', label: 'Dark' },
+        ]}
+      />
+    </Card>
   );
 }
 

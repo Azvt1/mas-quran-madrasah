@@ -225,7 +225,7 @@ export function HomeworkForm({
       <DueDatePicker value={dueDate} onChange={setDueDate} nextClass={nextClass} />
 
       <View style={{ gap: Spacing.two }}>
-        <AppText variant="label">Note for the student (optional)</AppText>
+        <AppText variant="label">Note for next lesson (optional)</AppText>
         <TextInput
           style={[inputStyle, { minHeight: 72, textAlignVertical: 'top' }]}
           value={notes}
