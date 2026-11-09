@@ -64,7 +64,8 @@ export default function StudentHomework() {
       },
     ]);
 
-  const row = { onPress: open, onEdit: edit, onDelete: confirmDelete, openRowRef };
+  const hintId = (pending[0] ?? notCompleted[0] ?? completed[0])?.id;
+  const row = { onPress: open, onEdit: edit, onDelete: confirmDelete, openRowRef, hintId };
 
   return (
     <Screen safeTop={false} onRefresh={hw.refetch} refreshing={hw.isRefetching}>
@@ -126,6 +127,7 @@ function Section({
   onEdit,
   onDelete,
   openRowRef,
+  hintId,
 }: {
   title: string;
   items: Assignment[];
@@ -133,6 +135,7 @@ function Section({
   onEdit: (a: Assignment) => void;
   onDelete: (a: Assignment) => void;
   openRowRef: RefObject<SwipeableMethods | null>;
+  hintId?: string;
 }) {
   if (!items.length) return null;
   return (
@@ -141,7 +144,7 @@ function Section({
       {items.map((a) => {
         const status = homeworkStatus(a);
         return (
-          <SwipeRow key={a.id} onEdit={() => onEdit(a)} onDelete={() => onDelete(a)} openRowRef={openRowRef}>
+          <SwipeRow key={a.id} onEdit={() => onEdit(a)} onDelete={() => onDelete(a)} openRowRef={openRowRef} hint={a.id === hintId}>
             <RowCard onPress={() => onPress(a)}>
               <AppText variant="heading">{a.title}</AppText>
               {a.bookReference ? <AppText variant="caption">{a.bookReference}</AppText> : null}
